@@ -1,30 +1,21 @@
 import { useState } from "react";
 import type { NextPage } from "next";
-import { useAccount, useBalance } from "wagmi";
+import { useAccount } from "wagmi";
+import useFounderNFT from "../hooks/useFounderNFT";
 import { Button, Layout, Loader, WalletOptionsModal } from "../components";
 
 const Home: NextPage = () => {
   const [showWalletOptions, setShowWalletOptions] = useState(false);
-  const [{ data: accountData, loading: accountLoading }] = useAccount();
-  const [{ data: balanceData, loading: balanceLoading }] = useBalance({
-    addressOrName: accountData?.address,
-    watch: true,
-  });
-
-  const loading = (accountLoading || balanceLoading) && !balanceData;
+  const [{ data }] = useAccount();
+  const { isFounder, loading } = useFounderNFT(data?.address);
 
   const renderContent = () => {
     if (loading) return <Loader size={8} />;
-    if (balanceData) {
+    if (!loading) {
       return (
-        <>
-          <h1 className="mb-8 text-4xl font-bold">My Wallet</h1>
-          <div className="inline-flex place-items-center">
-            <h6 className="ml-2 text-2xl">{`Ξ ${Number(
-              balanceData?.formatted
-            ).toFixed(4)} ${balanceData?.symbol}`}</h6>
-          </div>
-        </>
+        <h1 className="text-4xl">
+          {isFounder ? "Founder 😎" : "Not Founder 😭"}
+        </h1>
       );
     }
 
@@ -33,10 +24,7 @@ const Home: NextPage = () => {
         <h1 className="mb-8 text-4xl font-bold">
           Welcome to the NextJS wagmi template!
         </h1>
-        <Button
-          loading={accountLoading}
-          onClick={() => setShowWalletOptions(true)}
-        >
+        <Button loading={loading} onClick={() => setShowWalletOptions(true)}>
           Connect to Wallet
         </Button>
       </>
