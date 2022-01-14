@@ -6,28 +6,32 @@ import { Button, Layout, Loader, WalletOptionsModal } from "../components";
 
 const Home: NextPage = () => {
   const [showWalletOptions, setShowWalletOptions] = useState(false);
-  const [{ data }] = useAccount();
+  const [{ data, loading: accountLoading }] = useAccount();
   const { isFounder, loading } = useFounderNFT(data?.address);
 
   const renderContent = () => {
     if (loading) return <Loader size={8} />;
-    if (!loading) {
+
+    if (!data) {
       return (
-        <h1 className="text-4xl">
-          {isFounder ? "Founder 😎" : "Not Founder 😭"}
-        </h1>
+        <>
+          <h1 className="mb-8 text-4xl font-bold">
+            Welcome to the NextJS wagmi template!
+          </h1>
+          <Button
+            loading={accountLoading}
+            onClick={() => setShowWalletOptions(true)}
+          >
+            Connect to Wallet
+          </Button>
+        </>
       );
     }
 
     return (
-      <>
-        <h1 className="mb-8 text-4xl font-bold">
-          Welcome to the NextJS wagmi template!
-        </h1>
-        <Button loading={loading} onClick={() => setShowWalletOptions(true)}>
-          Connect to Wallet
-        </Button>
-      </>
+      <h1 className="text-4xl">
+        {isFounder ? "Founder 😎" : "Not Founder 😭"}
+      </h1>
     );
   };
 

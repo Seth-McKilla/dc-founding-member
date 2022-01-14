@@ -3,7 +3,7 @@ import { useAccount } from "wagmi";
 
 export default function useFounderNFT(address) {
   const [isFounder, setIsFounder] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
