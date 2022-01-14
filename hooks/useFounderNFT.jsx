@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useAccount } from "wagmi";
 
 export default function useFounderNFT(address) {
   const [isFounder, setIsFounder] = useState(false);
