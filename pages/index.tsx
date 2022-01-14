@@ -1,13 +1,17 @@
-import { useState } from "react";
-import type { NextPage } from "next";
-import { useAccount } from "wagmi";
-import useFounderNFT from "../hooks/useFounderNFT";
-import { Button, Layout, Loader, WalletOptionsModal } from "../components";
+import { useState } from 'react';
+import type { NextPage } from 'next';
+import { useAccount } from 'wagmi';
+import useFounderNFT from '../hooks/useFounderNFT';
+import { Button, Layout, Loader, WalletOptionsModal } from '../components';
 
 const Home: NextPage = () => {
   const [showWalletOptions, setShowWalletOptions] = useState(false);
   const [{ data, loading: accountLoading }] = useAccount();
-  const { isFounder, loading } = useFounderNFT(data?.address);
+  const { isOwner, loading, error } = useFounderNFT({
+    addressUser: data?.address,
+    addressNFT: '0x500c5C9FE70E5820eC829354620f1C070224917d',
+    idNFT: 0,
+  });
 
   const renderContent = () => {
     if (loading) return <Loader size={8} />;
@@ -16,7 +20,7 @@ const Home: NextPage = () => {
       return (
         <>
           <h1 className="mb-8 text-4xl font-bold">
-            Welcome to the NextJS wagmi template!
+            Welcome to the NFT Owner Example
           </h1>
           <Button
             loading={accountLoading}
@@ -29,9 +33,7 @@ const Home: NextPage = () => {
     }
 
     return (
-      <h1 className="text-4xl">
-        {isFounder ? "Founder 😎" : "Not Founder 😭"}
-      </h1>
+      <h1 className="text-4xl">{isOwner ? 'Owner 😎' : 'Not Owner 😭'}</h1>
     );
   };
 

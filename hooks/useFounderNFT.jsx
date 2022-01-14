@@ -1,24 +1,27 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-export default function useFounderNFT(address) {
-  const [isFounder, setIsFounder] = useState(false);
+export default function useOwnerNFT({ addressUser, addressNFT, idNFT }) {
+  const [isOwner, setIsOwner] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   useEffect(() => {
     let mounted = true;
 
-    const fetchFounder = async () => {
-      if (!address) return;
+    const fetchFounder = async ({}) => {
+      if (!addressUser || !addressNFT || isNaN(idNFT)) return;
       if (!mounted) return;
       setLoading(true);
 
       try {
+        // Fetch NFT with user address as query param
         const response = await fetch(
-          `https://api.opensea.io/api/v1/asset/0x500c5C9FE70E5820eC829354620f1C070224917d/0/?account_address=${address}`
+          `https://api.opensea.io/api/v1/asset/${addressNFT}/${idNFT}/?account_address=${addressUser}`,
         );
-        const founderNFT = await response.json();
-        setIsFounder(!!founderNFT.ownership);
+        const NFT = await response.json();
+
+        // Set isOwner to true if NFT is owned by user
+        setIsOwner(!!NFT.ownership);
       } catch (error) {
         console.error(error);
         setError(error.message);
@@ -32,10 +35,10 @@ export default function useFounderNFT(address) {
     return () => {
       mounted = false;
     };
-  }, [address]);
+  }, [addressUser, addressNFT, idNFT]);
 
   return {
-    isFounder,
+    isOwner,
     loading,
     error,
   };
